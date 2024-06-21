@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Container from "./ui/container";
 import MainNav from "./main-nav";
-import getCategories from "@/action/get-category";
+import getCategories from "@/actions/get-category";
 import NavBarActions from "./navbar-action";
 
 export const revalidate = 0;
