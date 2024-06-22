@@ -1,11 +1,11 @@
-import Image from "next/image";
-import { toast } from "react-hot-toast";
-import { X } from "lucide-react";
+"use client";
 
+import { Product } from "@/types";
+import Image from "next/image";
+import { X } from "lucide-react";
 import IconButton from "@/components/ui/icon-button";
 import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/use-cart";
-import { Product } from "@/types";
 
 interface CartItemProps {
   data: Product;
@@ -34,12 +34,11 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
         </div>
         <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
           <div className="flex justify-between">
-            <p className=" text-lg font-semibold text-black">{data.name}</p>
+            <p className="text-lg font-semibold text-black">{data.name}</p>
           </div>
-
           <div className="mt-1 flex text-sm">
             <p className="text-gray-500">{data.color.name}</p>
-            <p className="ml-4 border-l border-gray-200 pl-4 text-gray-500">
+            <p className="text-gray-500 ml-4 border-l border-gray-200 pl-4">
               {data.size.name}
             </p>
           </div>

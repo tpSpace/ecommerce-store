@@ -1,65 +1,52 @@
-import Container from "@/components/ui/container";
-import Billboard from "@/components/ui/billboard";
-import ProductCard from "@/components/ui/product-card";
-import NoResults from "@/components/ui/no-results";
+"use client";
 
-import getProducts from "@/actions/get-products";
-import getCategory from "@/actions/get-category";
-import getSizes from "@/actions/get-sizes";
-import getColors from "@/actions/get-colors";
+import { Product } from "@/types";
+import Image from "next/image";
+import { X } from "lucide-react";
+import IconButton from "@/components/ui/icon-button";
+import Currency from "@/components/ui/currency";
+import useCart from "@/hooks/use-cart";
 
-import Filter from "./components/filter";
-import MobileFilters from "./components/mobile-filters";
-
-export const revalidate = 0;
-
-interface CategoryPageProps {
-  params: {
-    categoryId: string;
-  };
-  searchParams: {
-    colorId: string;
-    sizeId: string;
-  };
+interface CartItemProps {
+  data: Product;
 }
 
-const CategoryPage: React.FC<CategoryPageProps> = async ({
-  params,
-  searchParams,
-}) => {
-  const products = await getProducts({
-    categoryId: params.categoryId,
-    colorId: searchParams.colorId,
-    sizeId: searchParams.sizeId,
-  });
-  const sizes = await getSizes();
-  const colors = await getColors();
-  const category = await getCategory(params.categoryId);
+const CartItem: React.FC<CartItemProps> = ({ data }) => {
+  const cart = useCart();
+
+  const onRemove = () => {
+    cart.removeItem(data.id);
+  };
 
   return (
-    <div className="bg-white">
-      <Container>
-        <Billboard data={category.billboard} />
-        <div className="px-4 sm:px-6 lg:px-8 pb-24">
-          <div className="lg:grid lg:grid-cols-5 lg:gap-x-8">
-            <MobileFilters sizes={sizes} colors={colors} />
-            <div className="hidden lg:block">
-              <Filter valueKey="sizeId" name="Sizes" data={sizes} />
-              <Filter valueKey="colorId" name="Colors" data={colors} />
-            </div>
-            <div className="mt-6 lg:col-span-4 lg:mt-0">
-              {products.length === 0 && <NoResults />}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {products.map((item) => (
-                  <ProductCard key={item.id} data={item} />
-                ))}
-              </div>
-            </div>
-          </div>
+    <li className="flex py-6 border-b">
+      <div className="relative h-24 w-24 rounded-md overflow-hidden sm:h-48 sm:w-48">
+        <Image
+          fill
+          src={data.images[0].url}
+          alt=""
+          className="object-cover object-center"
+        />
+      </div>
+      <div className="relative ml-4 flex flex-1 flex-col justify-between sm:ml-6">
+        <div className="absolute z-10 right-0 top-0">
+          <IconButton onClick={onRemove} icon={<X size={15} />} />
         </div>
-      </Container>
-    </div>
+        <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+          <div className="flex justify-between">
+            <p className="text-lg font-semibold text-black">{data.name}</p>
+          </div>
+          <div className="mt-1 flex text-sm">
+            <p className="text-gray-500">{data.color.name}</p>
+            <p className="text-gray-500 ml-4 border-l border-gray-200 pl-4">
+              {data.size.name}
+            </p>
+          </div>
+          <Currency value={data.price} />
+        </div>
+      </div>
+    </li>
   );
 };
 
-export default CategoryPage;
+export default CartItem;
